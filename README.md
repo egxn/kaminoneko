@@ -241,7 +241,7 @@ Progress tracking: see [PROGRESS.md](PROGRESS.md).
 
 ## License
 
-_Not specified yet._
+MIT License
 
 ## Contributing
 

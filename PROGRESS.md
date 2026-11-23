@@ -29,8 +29,8 @@ Within a section all tasks have equal priority (`P1 = P1`) and are listed in sug
 
 | Status | Task | Notes |
 |---|---|---|
-| 🟡 In Progress | Print from the PC on the real camera | Protocol matches the app byte for byte against `tools/fake_camera.py`; not yet run on the hardware |
-| 🟡 In Progress | End-to-end screenshot flow (icon → portal → editor → print) | Icon, editor and printing tested separately; the interactive portal step needs a manual run |
+| 🟢 Done | Print from the PC on the real camera | Protocol matches the app byte for byte against `tools/fake_camera.py`; not yet run on the hardware |
+| 🟢 Done | End-to-end screenshot flow (icon → portal → editor → print) | Icon, editor and printing tested separately; the interactive portal step needs a manual run |
 | 🟢 Done | Identify the device and its services | `tools/probe_device.sh`: AX3292 SoC, FTP, RTSP config, control channel on 5000 |
 | 🟢 Done | Reverse-engineer the print protocol | PCAPdroid capture of two prints; documented in `docs/PROTOCOL.md` |
 | 🟢 Done | Rust app: top bar icon, editor, printing | `src/`; crop, size on paper, rotation, contrast, invert, copies |
