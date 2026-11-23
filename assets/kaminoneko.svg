@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Kaminoneko app icon: the top bar cat on a brutalist yellow tile with a hard shadow. -->
+  <rect x="18" y="18" width="104" height="104" fill="#111111"/>
+  <rect x="6" y="6" width="104" height="104" fill="#FFD400" stroke="#111111" stroke-width="6"/>
+  <g fill="#111111">
+    <ellipse cx="58" cy="66" rx="33.6" ry="27.2"/>
+    <polygon points="26,58 30.8,22.8 54.8,43.6"/>
+    <polygon points="90,58 85.2,22.8 61.2,43.6"/>
+  </g>
+  <g fill="#FFD400">
+    <ellipse cx="45.2" cy="63.6" rx="5.2" ry="7.2"/>
+    <ellipse cx="70.8" cy="63.6" rx="5.2" ry="7.2"/>
+    <polygon points="54,73.2 62,73.2 58,78"/>
+  </g>
+</svg>

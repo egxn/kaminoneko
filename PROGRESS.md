@@ -44,6 +44,7 @@ Within a section all tasks have equal priority (`P1 = P1`) and are listed in sug
 | ⚪ To Do | Measure a real print to confirm the scale | Width of the printed area in mm; sets `DOTS_PER_MM` (8 assumed, ≈ 48 mm) |
 | ⚪ To Do | Find the maximum image height | Only 384 and 401 px seen; very tall crops may be rejected |
 | ⚪ To Do | Text printing in the editor | `tools/print_image.py --text` already renders text |
+| 🟢 Done | Release 0.1.0 and per-user installer | `scripts/release.sh` → `dist/` tarball; `scripts/install.sh`: app menu entry with actions, optional autostart, uninstall |
 | 🟢 Done | Editor is just the paper: move, scale and cut on the strip | Replaces the crop canvas; snapping to center and print area; controls at the bottom |
 | 🟢 Done | Brutalist theme | `src/theme.rs`, dark and light mode |
 | 🟢 Done | Repo layout from the workspace template | README, PROGRESS, `docs/`, `tools/`, git-ignored `captures/` |
@@ -64,7 +65,7 @@ Within a section all tasks have equal priority (`P1 = P1`) and are listed in sug
 |---|---|---|
 | ⚪ To Do | Decode the remaining status messages | `0x02` blob, `0x03`, `0x0c`, `0x0f`, `0x1d`, header field `0xf200` |
 | ⚪ To Do | Support more camera models | Other DiDi Cam / KX_Print / FR_PRINT cameras |
-| ⚪ To Do | Packaging | `.deb` or Flatpak |
+| ⚪ To Do | Distro packaging | `.deb` or Flatpak; today: tarball + `install.sh` |
 | ⚪ To Do | Choose a license | |
 
 ---

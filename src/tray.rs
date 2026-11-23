@@ -67,6 +67,27 @@ impl ksni::Tray for Tray {
     }
 }
 
+/// Held for as long as the top bar icon runs, so a second launch can tell.
+pub struct InstanceLock {
+    _file: Option<std::fs::File>,
+}
+
+/// `None` when another top bar icon is already running. If the lock file cannot be
+/// created, runs anyway.
+pub fn lock_instance() -> Option<InstanceLock> {
+    let dir = std::env::var_os("XDG_RUNTIME_DIR").map(PathBuf::from).unwrap_or_else(std::env::temp_dir);
+    lock_at(&dir.join("kaminoneko.lock"))
+}
+
+fn lock_at(path: &Path) -> Option<InstanceLock> {
+    let file = std::fs::OpenOptions::new().create(true).write(true).truncate(false).open(path);
+    let Ok(file) = file else { return Some(InstanceLock { _file: None }) };
+    match file.try_lock() {
+        Err(std::fs::TryLockError::WouldBlock) => None,
+        _ => Some(InstanceLock { _file: Some(file) }),
+    }
+}
+
 pub async fn run() -> Result<(), String> {
     let (tx, mut rx) = unbounded_channel();
     let _handle = Tray { tx }
@@ -102,7 +123,7 @@ pub async fn capture() -> Result<Option<PathBuf>, String> {
     }
 }
 
-async fn pick_image() -> Result<Option<PathBuf>, String> {
+pub async fn pick_image() -> Result<Option<PathBuf>, String> {
     let filter = ["image/png", "image/jpeg", "image/webp", "image/bmp", "image/gif"]
         .into_iter()
         .fold(FileFilter::new("Images"), |f, m| f.mimetype(m));
@@ -194,4 +215,20 @@ fn cat(x: f32, y: f32) -> bool {
     let eye = |cx: f32| ((x - cx) / 0.065).powi(2) + ((y - 0.57) / 0.09).powi(2) <= 1.0;
     let nose = in_triangle((x, y), (0.45, 0.69), (0.55, 0.69), (0.5, 0.75));
     (head || ears) && !eye(0.34) && !eye(0.66) && !nose
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn second_instance_is_detected_until_the_first_exits() {
+        let path = std::env::temp_dir().join(format!("kaminoneko-test-{}.lock", std::process::id()));
+        let first = lock_at(&path);
+        assert!(first.is_some());
+        assert!(lock_at(&path).is_none(), "second launch must see the first one");
+        drop(first);
+        assert!(lock_at(&path).is_some(), "lock is released when the first one exits");
+        let _ = std::fs::remove_file(path);
+    }
 }

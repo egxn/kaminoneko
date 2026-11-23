@@ -32,19 +32,35 @@ directly from the PC, using a protocol reverse-engineered from the app's traffic
 
 ## Getting Started
 
-Requirements: Rust ≥ 1.88, `nmcli` (NetworkManager), xdg-desktop-portal (with the GNOME or KDE backend).
-No `-dev` system packages are needed. The Python tools need Python 3 and Pillow.
+Requirements: `nmcli` (NetworkManager), xdg-desktop-portal (with the GNOME or KDE backend) and
+OpenGL or Vulkan. Building needs Rust ≥ 1.89 and no `-dev` system packages. The Python tools need
+Python 3 and Pillow.
+
+Install for the current user (binary in `~/.local/bin`, icon and app menu entry):
 
 ```bash
-# build
-cargo build --release
+# from a release tarball
+tar xzf kaminoneko-0.1.0-x86_64-linux.tar.gz
+kaminoneko-0.1.0-x86_64-linux/install.sh
 
-# run the top bar icon
-./target/release/kaminoneko
+# or from the repository (builds with cargo first)
+scripts/install.sh
 
-# optional: copy to ~/.local/bin, add a menu entry and start on login
-./target/release/kaminoneko install
+# options: --autostart (start the top bar icon on login), --uninstall
 ```
+
+Then open **Kaminoneko** from the app menu. Running the install script again updates it.
+
+### Building a release
+
+```bash
+scripts/release.sh
+# lint (warnings are errors), tests, build, then:
+# dist/kaminoneko-<version>-<arch>-linux.tar.gz and its .sha256
+```
+
+The tarball holds the binary, `install.sh`, the icon and this README. The binary needs a glibc at
+least as new as the build machine's (built on Ubuntu 26.04).
 
 The camera must be on, with its Wi-Fi enabled, and the PC must have connected to its Wi-Fi once
 so that NetworkManager has a saved profile for it.
@@ -53,8 +69,13 @@ so that NetworkManager has a saved profile for it.
 
 ### Top bar icon
 
-Click the cat and choose **Take screenshot…** (or **Print an image…** to pick a file). Select the area
-in GNOME's screenshot tool and the editor opens.
+Open **Kaminoneko** from the app menu: a cat appears in the top bar. Click it and choose
+**Take screenshot…** (or **Print an image…** to pick a file). Select the area in GNOME's screenshot
+tool and the editor opens.
+
+Opening Kaminoneko again while the cat is in the top bar takes a screenshot instead of adding a
+second cat. Right-click the menu entry for **Take screenshot and print** and **Print an image…**
+without the top bar icon.
 
 ### Editor
 
@@ -76,16 +97,18 @@ The hatched sides of the paper are never printed (the head is 384 dots wide).
 ### Command line
 
 ```bash
-kaminoneko               # top bar icon
+kaminoneko               # top bar icon (if already running: take a screenshot)
 kaminoneko capture       # take a screenshot and open the editor
+kaminoneko open          # pick an image file and open the editor
 kaminoneko edit IMAGE    # open the editor with an image
 kaminoneko print IMAGE   # print right away at full width, no editor
-kaminoneko install       # install to ~/.local/bin, menu entry and autostart
+kaminoneko --version
 ```
 
 ### Keyboard shortcut
 
-GNOME Settings → Keyboard → Custom Shortcuts, command `kaminoneko capture`.
+GNOME Settings → Keyboard → Custom Shortcuts, command `~/.local/bin/kaminoneko capture`
+(full path: GNOME does not always have `~/.local/bin` in its PATH).
 
 ### Research tools
 
@@ -107,6 +130,10 @@ Environment variables, read when printing:
 |---|---|---|
 | `KAMINONEKO_IP` | `192.168.1.1` | Camera IP |
 | `KAMINONEKO_WIFI` | `Children's camera d109` | NetworkManager profile of the camera's Wi-Fi |
+
+When launched from the app menu, set them in the entry's command, e.g.
+`Exec=env KAMINONEKO_IP=192.168.1.1 "/home/you/.local/bin/kaminoneko"` in
+`~/.local/share/applications/kaminoneko.desktop` (re-running `install.sh` overwrites it).
 
 The network to return to is not configured: it is whichever Wi-Fi was active before printing.
 Protocol and paper constants live in `src/printer.rs`: `PAPER_WIDTH_MM` (roll width, 66 mm) and
@@ -163,7 +190,7 @@ Camera protocol (framing, heartbeat, mode, print header, luma conversion) and th
 
 ### `src/main.rs`
 
-Subcommands and the `install` command.
+Subcommands; a lock in `$XDG_RUNTIME_DIR` keeps a single top bar icon.
 
 ### `tools/`
 
@@ -175,15 +202,21 @@ Python and shell tools used to reverse-engineer and test the camera (see [Resear
 kaminoneko/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs        # subcommands, install
+│   ├── main.rs        # subcommands, single-instance lock
 │   ├── tray.rs        # top bar icon, portals
 │   ├── editor.rs      # editor window: the paper and its controls
 │   ├── theme.rs       # brutalist style
 │   ├── imaging.rs     # tone / scale / place pipeline
 │   └── printer.rs     # camera protocol, Wi-Fi switching
+├── assets/
+│   └── kaminoneko.svg # app icon
+├── scripts/
+│   ├── install.sh     # per-user install: binary, icon, menu entry, autostart
+│   └── release.sh     # lint, test, build and package into dist/
 ├── tools/             # probes, pcap decoder, simulator, Python printer
 ├── docs/
 │   └── PROTOCOL.md    # reverse-engineered print protocol
+├── dist/              # release tarballs (git-ignored)
 └── captures/          # tool output, pcaps, dumps (git-ignored)
 ```
 
