@@ -1,0 +1,24 @@
+[package]
+name = "kaminoneko"
+version = "0.1.0"
+edition = "2024"
+description = "Top bar icon to take a screenshot, place and scale it on the paper, and print it on a Wi-Fi kids' print camera"
+rust-version = "1.88"
+
+[dependencies]
+ashpd = { version = "0.14", features = ["screenshot", "file_chooser"] }
+eframe = "0.37"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "bmp", "gif"] }
+ksni = "0.3"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] }
+
+[profile.release]
+lto = "thin"
+strip = true
+
+[profile.dev.package."*"]
+opt-level = 2
+
+[features]
+# Testing only: KAMINONEKO_TEST_SCREENSHOT=file.png saves the window and exits.
+test-screenshot = []

@@ -1,0 +1,8 @@
+/target
+
+# Captures and device dumps: they contain personal photos, network traffic
+# from the phone and the vendor's firmware. Never commit them.
+/captures/
+
+__pycache__/
+*.pyc
